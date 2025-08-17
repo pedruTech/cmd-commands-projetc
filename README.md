@@ -1,15 +1,15 @@
 
-⚙️ Tecnologias Utilizadas
-- Windows 10 – Prompt de Comando (CMD)  
+Tecnologias Utilizadas:
+- Windows 10  adaptado – Prompt de Comando (CMD)  
 - Microsoft Word (para documentação)  
 
 
 
-👨‍🎓 Autor
+Autor:
 *Pedro Batinga*  
 Curso: Análise e Desenvolvimento de Sistemas – 2º período  
 Disciplina: Sistemas Operacionais
 
 
 
-Atualização do README com descrição detalhada 
+Atualização do README com descrição detalhada 2.0
