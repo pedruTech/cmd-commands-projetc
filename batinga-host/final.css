@@ -550,3 +550,210 @@ a:focus-visible,button:focus-visible{
   .contact-section>.container{grid-template-columns:1fr!important;gap:32px!important}
   .contact-heading h2{font-size:36px!important}
 }
+
+
+/* === FINAL PREMIUM INTERACTION PASS === */
+
+/* Fix the mobile workflow collision completely. */
+@media (max-width:700px){
+  .architecture-section .workflow{
+    display:block!important;
+    margin-top:0!important;
+  }
+  .architecture-section .workflow-step{
+    display:block!important;
+    grid-template-columns:none!important;
+    grid-template-rows:none!important;
+    min-height:0!important;
+    padding:24px 0 26px!important;
+    position:relative!important;
+    overflow:visible!important;
+  }
+  .architecture-section .workflow-step h3,
+  .architecture-section .workflow-step p{
+    display:block!important;
+    position:static!important;
+    grid-column:auto!important;
+    grid-row:auto!important;
+    width:auto!important;
+    max-width:none!important;
+    margin-left:0!important;
+    transform:none!important;
+  }
+  .architecture-section .workflow-step h3{
+    margin:0 0 9px!important;
+    font-size:19px!important;
+    line-height:1.25!important;
+  }
+  .architecture-section .workflow-step p{
+    margin:0!important;
+    padding:0!important;
+    font-size:12px!important;
+    line-height:1.82!important;
+  }
+}
+
+/* A thin, quiet scroll-progress signature. */
+.batinga-scroll-progress{
+  position:fixed;
+  z-index:90;
+  left:0;
+  top:0;
+  height:2px;
+  width:100%;
+  transform:scaleX(0);
+  transform-origin:left center;
+  background:linear-gradient(90deg,rgba(120,227,177,.42),var(--batinga-accent),rgba(120,227,177,.62));
+  box-shadow:0 0 18px rgba(120,227,177,.22);
+  pointer-events:none;
+  will-change:transform;
+}
+
+/* Subtle ambient pointer light. Desktop only; never blocks content. */
+.batinga-cursor-light{
+  position:fixed;
+  z-index:2;
+  width:520px;
+  height:520px;
+  margin:-260px 0 0 -260px;
+  border-radius:50%;
+  pointer-events:none;
+  opacity:0;
+  background:radial-gradient(circle,rgba(120,227,177,.065) 0%,rgba(120,227,177,.025) 28%,transparent 68%);
+  filter:blur(10px);
+  transition:opacity .28s ease;
+  will-change:transform;
+  mix-blend-mode:screen;
+}
+
+/* Premium hover illumination, calculated per element from the pointer position. */
+.batinga-interactive-surface{
+  --px:50%;
+  --py:50%;
+  position:relative;
+  isolation:isolate;
+}
+.batinga-interactive-surface::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  z-index:-1;
+  pointer-events:none;
+  opacity:0;
+  background:radial-gradient(420px circle at var(--px) var(--py),rgba(120,227,177,.065),transparent 42%);
+  transition:opacity .28s ease;
+}
+.batinga-interactive-surface:hover::after{opacity:1}
+
+/* Keep the effect architectural rather than "gaming UI". */
+.capability-item.batinga-interactive-surface::after,
+.creation-item.batinga-interactive-surface::after,
+.relation-item.batinga-interactive-surface::after,
+.audience-row.batinga-interactive-surface::after,
+.workflow-step.batinga-interactive-surface::after,
+.engineering-row.batinga-interactive-surface::after{
+  inset:-1px 0;
+}
+
+/* Section-level reveal line adds rhythm without labels or badges. */
+.batinga-section-rule{
+  width:0;
+  height:1px;
+  background:linear-gradient(90deg,var(--batinga-accent),rgba(120,227,177,0));
+  opacity:.62;
+  margin-bottom:34px;
+  transition:width .9s cubic-bezier(.2,.72,.2,1);
+}
+.is-visible>.batinga-section-rule,
+.is-visible .batinga-section-rule,
+.batinga-section-rule.is-visible{width:64px}
+
+/* Elevated CTA behavior: slight lift, no exaggerated glow. */
+.hero-actions a,
+.header-end a,
+.manifesto a,
+.contact-link{
+  transition:transform .22s ease,border-color .22s ease,background-color .22s ease,color .22s ease!important;
+}
+.hero-actions a:hover,
+.header-end a:hover,
+.manifesto a:hover{
+  transform:translateY(-2px)!important;
+}
+.contact-link:hover{transform:translateX(4px)!important}
+
+/* Platform nodes feel responsive without looking like floating game cards. */
+.platform-node{
+  --px:50%;
+  --py:50%;
+  overflow:hidden!important;
+}
+.platform-node::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+  opacity:0;
+  background:radial-gradient(240px circle at var(--px) var(--py),rgba(120,227,177,.10),transparent 48%);
+  transition:opacity .22s ease;
+}
+.platform-node:hover::after,
+.platform-node.node-active::after{opacity:1}
+
+/* Digital core gets a restrained depth cue. */
+.digital-core-stage{
+  transition:opacity .45s ease,filter .45s ease,transform .6s cubic-bezier(.2,.72,.2,1)!important;
+}
+.hero:hover .digital-core-stage{
+  filter:saturate(.92) brightness(1.04)!important;
+}
+
+/* Text selection, small detail that makes the whole surface feel authored. */
+::selection{
+  background:rgba(120,227,177,.22);
+  color:var(--foreground);
+}
+
+/* Desktop section depth. */
+@media (min-width:701px){
+  .section,
+  .batinga-audience,
+  .manifesto,
+  .contact-section{
+    scroll-margin-top:90px;
+  }
+
+  .hero-actions a,
+  .header-end a,
+  .manifesto a{
+    will-change:transform;
+  }
+}
+
+/* Mobile: preserve performance and touch comfort. */
+@media (max-width:700px){
+  .batinga-cursor-light{display:none!important}
+  .batinga-interactive-surface::after,
+  .platform-node::after{display:none!important}
+  .hero-actions a:hover,
+  .header-end a:hover,
+  .manifesto a:hover,
+  .contact-link:hover{transform:none!important}
+
+  .architecture-section .section-heading{
+    margin-bottom:30px!important;
+  }
+
+  .architecture-section .workflow-note{
+    margin-top:22px!important;
+    padding-top:18px!important;
+    border-top:1px solid var(--batinga-line)!important;
+  }
+}
+
+/* Reduced motion means truly calm motion. */
+@media (prefers-reduced-motion:reduce){
+  .batinga-scroll-progress{transition:none!important}
+  .batinga-cursor-light{display:none!important}
+  .batinga-section-rule{width:64px!important;transition:none!important}
+}
