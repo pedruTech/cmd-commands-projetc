@@ -207,8 +207,8 @@
     if(!section)return;
     section.id="arquitetura";
     setHTML("#flow-title",'Da intenção à <span>execução verificável.</span>');
-    const p=q(".architecture-section .section-heading>p");
-    if(p)p.textContent="O valor não está em responder rápido. Está em entender o contexto, escolher o caminho certo, executar com controle e verificar o resultado.";
+    const lead=q(".architecture-section .section-heading>p");
+    if(lead)lead.textContent="O valor não está em responder rápido. Está em entender o contexto, escolher o caminho certo, executar com controle e verificar o resultado.";
 
     const desired=[
       ["Entender","Compreender a intenção, o contexto, as restrições e o que realmente importa."],
@@ -221,15 +221,14 @@
 
     const workflow=q(".workflow",section);
     if(workflow){
-      const byTitle=new Map(qa(".workflow-step",workflow).map(el=>[q("h3",el)?.textContent?.trim(),el]));
-      desired.forEach(([title,text])=>{
-        const el=byTitle.get(title);
-        if(!el)return;
-        const h=q("h3",el),p=q("p",el);
-        if(h)h.textContent=title;if(p)p.textContent=text;
-        workflow.appendChild(el);
-      });
+      workflow.innerHTML=desired.map(([title,text]) =>
+        '<article class="workflow-step architecture-step">' +
+          '<h3>'+title+'</h3>' +
+          '<p>'+text+'</p>' +
+        '</article>'
+      ).join("");
     }
+
     const note=q(".workflow-note",section);
     if(note)note.textContent="A execução permanece condicionada a contexto, permissões, aprovações e verificações aplicáveis a cada ação.";
   };
