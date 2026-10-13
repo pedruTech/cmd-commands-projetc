@@ -338,3 +338,151 @@
 
   new MutationObserver(scheduleEnhance).observe(document.documentElement,{subtree:true,childList:true});
 })();
+
+/* Final premium interaction layer */
+(() => {
+  const q=(s,r=document)=>r.querySelector(s);
+  const qa=(s,r=document)=>Array.from(r.querySelectorAll(s));
+  const reduce=window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const finePointer=window.matchMedia("(pointer:fine)").matches;
+
+  const ensureProgress=()=>{
+    if(q(".batinga-scroll-progress"))return q(".batinga-scroll-progress");
+    const el=document.createElement("div");
+    el.className="batinga-scroll-progress";
+    el.setAttribute("aria-hidden","true");
+    document.body.appendChild(el);
+    return el;
+  };
+
+  const setupProgress=()=>{
+    const bar=ensureProgress();
+    let ticking=false;
+    const update=()=>{
+      ticking=false;
+      const max=Math.max(1,document.documentElement.scrollHeight-window.innerHeight);
+      const progress=Math.max(0,Math.min(1,window.scrollY/max));
+      bar.style.transform="scaleX("+progress+")";
+    };
+    const onScroll=()=>{
+      if(ticking)return;
+      ticking=true;
+      requestAnimationFrame(update);
+    };
+    update();
+    window.addEventListener("scroll",onScroll,{passive:true});
+    window.addEventListener("resize",onScroll,{passive:true});
+  };
+
+  const setupCursorLight=()=>{
+    if(reduce||!finePointer||q(".batinga-cursor-light"))return;
+    const glow=document.createElement("div");
+    glow.className="batinga-cursor-light";
+    glow.setAttribute("aria-hidden","true");
+    document.body.appendChild(glow);
+    let x=window.innerWidth*.5,y=window.innerHeight*.35,tx=x,ty=y,raf=0;
+
+    const draw=()=>{
+      raf=0;
+      x+=(tx-x)*.16;
+      y+=(ty-y)*.16;
+      glow.style.transform="translate3d("+x+"px,"+y+"px,0)";
+      if(Math.abs(tx-x)>.2||Math.abs(ty-y)>.2)raf=requestAnimationFrame(draw);
+    };
+    window.addEventListener("pointermove",e=>{
+      tx=e.clientX;ty=e.clientY;
+      glow.style.opacity=".92";
+      if(!raf)raf=requestAnimationFrame(draw);
+    },{passive:true});
+    document.documentElement.addEventListener("mouseleave",()=>glow.style.opacity="0");
+  };
+
+  const setupSurfaceLighting=()=>{
+    if(!finePointer)return;
+    const selectors=[
+      ".capability-item",".creation-item",".relation-item",".audience-row",
+      ".workflow-step",".engineering-row",".founder-portrait",".contact-link"
+    ];
+    qa(selectors.join(",")).forEach(el=>{
+      if(el.dataset.batingaInteractive==="1")return;
+      el.dataset.batingaInteractive="1";
+      el.classList.add("batinga-interactive-surface");
+      el.addEventListener("pointermove",e=>{
+        const r=el.getBoundingClientRect();
+        el.style.setProperty("--px",((e.clientX-r.left)/r.width*100).toFixed(1)+"%");
+        el.style.setProperty("--py",((e.clientY-r.top)/r.height*100).toFixed(1)+"%");
+      },{passive:true});
+    });
+
+    qa(".platform-node").forEach(el=>{
+      if(el.dataset.batingaLight==="1")return;
+      el.dataset.batingaLight="1";
+      el.addEventListener("pointermove",e=>{
+        const r=el.getBoundingClientRect();
+        el.style.setProperty("--px",((e.clientX-r.left)/r.width*100).toFixed(1)+"%");
+        el.style.setProperty("--py",((e.clientY-r.top)/r.height*100).toFixed(1)+"%");
+      },{passive:true});
+    });
+  };
+
+  const setupSectionRules=()=>{
+    const targets=[
+      "#visao .section-heading",
+      "#plataforma .section-heading",
+      ".architecture-section .section-heading",
+      ".engineering-intro",
+      ".founder-copy",
+      ".contact-heading",
+      ".audience-intro"
+    ];
+    targets.forEach(sel=>{
+      const host=q(sel);
+      if(!host||q(".batinga-section-rule",host))return;
+      const rule=document.createElement("div");
+      rule.className="batinga-section-rule";
+      rule.setAttribute("aria-hidden","true");
+      host.prepend(rule);
+
+      if(!("IntersectionObserver" in window)||reduce){
+        rule.classList.add("is-visible");
+        return;
+      }
+      const obs=new IntersectionObserver(([entry])=>{
+        if(entry?.isIntersecting){
+          rule.classList.add("is-visible");
+          obs.disconnect();
+        }
+      },{threshold:.25});
+      obs.observe(host);
+    });
+  };
+
+  const setupHeroDepth=()=>{
+    if(reduce||!finePointer)return;
+    const hero=q(".hero");
+    const core=q(".digital-core-stage");
+    if(!hero||!core||hero.dataset.batingaDepth==="1")return;
+    hero.dataset.batingaDepth="1";
+    hero.addEventListener("pointermove",e=>{
+      const r=hero.getBoundingClientRect();
+      const nx=(e.clientX-r.left)/r.width-.5;
+      const ny=(e.clientY-r.top)/r.height-.5;
+      core.style.transform="translate3d("+(nx*8).toFixed(2)+"px,"+(ny*6).toFixed(2)+"px,0)";
+    },{passive:true});
+    hero.addEventListener("pointerleave",()=>{core.style.transform="translate3d(0,0,0)";});
+  };
+
+  const setup=()=>{
+    setupProgress();
+    setupCursorLight();
+    setupSurfaceLighting();
+    setupSectionRules();
+    setupHeroDepth();
+  };
+
+  if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",setup,{once:true});
+  else setup();
+
+  setTimeout(setup,900);
+  setTimeout(setup,2200);
+})();
